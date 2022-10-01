@@ -1,0 +1,608 @@
+version: 2
+models:
+  - name: base_ecc_makt
+    description: Material descriptions.
+    columns:
+      - name: ingestion_timestamp
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: matnr
+        description: Material number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spras
+        description: Language key ('E' = English). Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: maktx
+        description: Material description (short text).
+  - name: base_ecc_mara
+    description: General material data.
+    columns:
+      - name: ingestion_timestamp
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: matnr
+        description: Material number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: ersda
+        description: Created on.
+      - name: mtart
+        description: Material type ('FERT' = finished products produced in-house).
+      - name: ntgew
+        description: Net weight.
+      - name: gewei
+        description: Weight unit.
+      - name: matkl
+        description: Material group.
+      - name: meins
+        description: Base unit of measure.
+      - name: zz_prod_cat
+        description: Product catgegory. Custom field with species code.
+  - name: base_ecc_mvke
+    description: Sales data for material.
+    columns:
+      - name: ingestion_timestamp
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: matnr
+        description: Material number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vkorg
+        description: Sales organization. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vtweg
+        description: Distribution channel. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vmsta
+        description: Distribution-chain-specific material status.
+      - name: vmstd
+        description: Date from which status is valid.
+  - name: base_ecc_kna1
+    description: General data in customer master.
+    columns:
+      - name: ingestion_timestamp
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kunnr
+        description: Customer number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: erdat
+        description: Date on which the record was created.
+      - name: name1
+        description: Name 1.
+      - name: name2
+        description: Name 2.
+      - name: name3
+        description: Name 3.
+      - name: name4
+        description: Name 4.
+      - name: spras
+        description: Language key.
+      - name: stras
+        description: House number and street.
+      - name: ort01
+        description: City.
+      - name: pstlz
+        description: Postal code.
+      - name: land1
+        description: Country key.
+      - name: loevm
+        description: Central deletion flag for master record.
+      - name: telf1
+        description: First telephone number.
+      - name: telfx
+        description: Fax number.
+      - name: brsch
+        description: Industry key.
+      - name: regio
+        description: Region (state, province, county).
+      - name: mcod3
+        description: city
+      - name: lzone
+        description: Transportation zone to or from which the goods are delivered.
+      - name: kukla
+        description: Customer classification.
+  - name: base_ecc_knvk
+    description: Customer master contact partner.
+    columns:
+      - name: ingestion_timestamp
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kunnr
+        description: Customer number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: parnr
+        description: Number of contact person.
+      - name: anred
+        description: Form of address for contact person (Mr, Mrs...etc).
+      - name: namev
+        description: First name.
+      - name: name1
+        description: Name 1.
+      - name: loevm
+        description: Central deletion flag for master record.
+      - name: erdat
+        description: Date on which the record was created.
+      - name: adrnp
+        description: Home address.
+      - name: ort01
+        description: City.
+      - name: pafkt
+        description: Contact person function.
+  - name: base_ecc_knvv
+    description: Customer master sales data.
+    columns:
+      - name: ingestion_timestamp
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kunnr
+        description: Customer number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vkorg
+        description: Sales organization. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vtweg
+        description: Distribution channel. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spart
+        description: Division. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kvgr2
+        description: Customer group 2.
+      - name: vkbur
+        description: Sales office.
+      - name: vkgrp
+        description: Sales group.
+      - name: bzirk
+        description: Sales district.
+      - name: klabc
+        description: Customer classification (ABC analysis).
+      - name: konda
+        description: Price group.
+      - name: pltyp
+        description: Price list type.
+      - name: kvgr3
+        description: Customer group 3.
+  - name: base_ecc_tsad2
+    description: Academic title (business address services).
+    columns:
+      - name: client
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: title_key
+        description: Academic title key. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: title_text
+        description: Academic title written form.
+  - name: base_ecc_adrp
+    description: Persons (business address services).
+    columns:
+      - name: client
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: persnumber
+        description: Person number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: date_from
+        description: Valid-from date. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: nation
+        description: Version ID for international addresses. Part of composite key.
+      - name: title_aca1
+        description: Academic title key.
+  - name: base_ecc_adr6
+    description: E-mail addresses (business address services).
+    columns:
+      - name: client
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: addrnumber
+        description: Address number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: persnumber
+        description: Person number. Part of composite key.
+      - name: date_from
+        description: Valid-from date. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: consnumber
+        description: Sequence number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: smtp_addr
+        description: E-mail address.
+  - name: base_ecc_adr2
+    description: Telephone numbers (business address services).
+    columns:
+      - name: client
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: addrnumber
+        description: Address number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: persnumber
+        description: Person number. Part of composite key.
+      - name: date_from
+        description: Valid-from date. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: consnumber
+        description: Sequence number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: tel_number
+        description: Telephone number.
+  - name: base_ecc_tvakt
+    description: Order type descriptions.
+    columns:
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spras
+        description: Language key. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: auart
+        description: Sales order type. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: bezei
+        description: Description.
+  - name: base_ecc_vbak
+    description: Sales document header data.
+    columns:
+      - name: ingestion_timestamp
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+              tags: [fresh,quality]
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vbeln
+        description: Sales document. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: auart
+        description: Sales document type.
+      - name: erdat
+        description: Date on which record was created.
+      - name: vbtyp
+        description: SD document category.
+      - name: waerk
+        description: SD document currency.
+      - name: vkorg
+        description: Sales organization.
+      - name: vtweg
+        description: Distribution channel.
+      - name: spart
+        description: Division.
+      - name: vkgrp
+        description: Sales group.
+      - name: vkbur
+        description: Sales office.
+      - name: rplnr
+        description: Number of payment card plan type.
+      - name: netwr
+        description: Net Value of the Sales Order.
+  - name: base_ecc_vbap
+    description: Sales document item data.
+    columns:
+      - name: ingestion_timestamp
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+              tags: [fresh,quality]
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vbeln
+        description: Sales document. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: posnr
+        description: Sales document item. Part of composite kye.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: matnr
+        description: Material number.
+      - name: kwmeng
+        description: Cumulative order quantity in sales units.
+      - name: vrkme
+        description: Sales unit.
+      - name: netpr
+        description: Net price.
+      - name: ntgew
+        description: Net weight of the item.
+      - name: netwr
+        description: Net value of the order item.
+      - name: abgru
+        description: Reason for rejection of quotations and sales orders.
+      - name: route
+        description: Delivery route.
+  - name: base_ecc_vbpa
+    description: Sales document partner.
+    columns:
+      - name: ingestion_timestamp
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+              tags: [fresh,quality]
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vbeln
+        description: Sales and distribution document number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: posnr
+        description: Item number of the SD document. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: parvw
+        description: Partner function. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kunnr
+        description: Customer number.
+      - name: parnr
+        description: Number of contact person.
+      - name: land1
+        description: Country key.
+  - name: base_ecc_vbuk
+    description: Sales document header status and adminstrative data.
+    columns:
+      - name: ingestion_timestamp
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
+              tags: [fresh,quality]
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vbeln
+        description: Sales and distribution document number. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: gbstk
+        description: Overall processing status of the order
+  - name: base_ecc_zhybris_orderlog_merge
+    description: Merged order log from SAP Hybris. Source is a custom table.
+    columns:
+      - name: mandt
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: logno
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: sales_order
+        description: Order number.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: sales_item
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: sku
+        description: ''
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: ship_to
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: rfc_name
+        description: SAP function module name.
+        tests:
+          - accepted_values:
+              values: ['MERGE_SALESORDER']
+      - name: changed_date
+        description: Date on which the merge was placed.
+      - name: changed_time
+        description: Time on which the merge was placed.
+  - name: base_ecc_tvagt
+    description: Rejection Reasons for Sales Documents.
+    columns:
+      - name: mandt
+        description: Client. Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spras
+        description: Language key ('E' = English). Part of composite key.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: abgru
+        description: Reason for rejection of quotations and sales orders.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: bezei
+        description: Description.
+  - name: base_ecc_tvv3t
+    description: Customer-group 3 descriptions.
+    columns:
+      - name: mandt
+        description: Client (CPK).
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spras
+        description: Language key (CPK).
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kvgr3
+        description: Customer group 3 (CPK).
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: bezei
+        description: Description.
+  - name: base_ecc_tvrot
+    description: Order route information.
+    columns:
+      - name: mandt
+        description: Client (CPK).
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spras
+        description: Language key (CPK).
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: route
+        description: Route (CPK).
+      - name: bezei
+        description: Description.
+  - name: incremental_load
+    description: Creates filter for base tables to only load changed orders
+  - name: base_ecc_knvh
+    description: Customer Hierarchies.
+    columns:
+      - name: mandt
+        description: Client (CPK).
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: hityp
+        description: Customer hierarchy type.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: kunnr
+        description: Customer account number.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vkorg
+        description: Sales Organization.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: vtweg
+        description: Distribution channel.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: spart
+        description: Division.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: datab
+        description: Start of validity period for assignment.
+        tests:
+          - dbt_utils.not_accepted_values:
+              values: [' ']
+      - name: datbi
+        description: End of validity period for the assignment.
+      - name: hkunnr
+        description: Customer number of the higher-level customer hierarchy.
+      - name: hvkorg
+        description: Higher-level sales organization.
+      - name: hvtweg
+        description: Higher-level distribution channel.
+      - name: hspart
+        description: Higher-level division.
+      - name: grpno
+        description: Number of the routine used for copying.
+      - name: bokre 
+        description: Indicator, Customer Is Rebate-Relevant.
+      - name: prfre
+        description: Relevant for price determination ID.
+      - name: hzuor
+        description: Assignment to Hierarchy.
+      - name: ingestion_timestamp
