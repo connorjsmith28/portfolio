@@ -1,0 +1,317 @@
+version: 2
+
+models:
+  - name: dim_ecc_products
+    description: >
+      Includes finished products only. Use an inner join on sku and sales_org
+      to find orders for finished products in fct_ecc_orders.
+    columns:
+      - name: product_sales_id
+        description: Surrogate key based on sku and sales_org (PK).
+        tests:
+          - unique:
+              tags: [integrity,unique]
+          - not_null:
+              tags: [integrity,not_null]
+      - name: sku
+        description: >
+          Alphanumeric code used to identify a product within a sales organization.
+      - name: sales_org
+      - name: sku_created_on
+        description: Date when a product became active.
+      - name: status_code
+      - name: status_description
+        description: Whether a product is currently produced and/or available to order (in-stock).
+      - name: discontinued_on
+      - name: product_description
+      - name: brand_code
+        description: Abbreviated brand name.
+      - name: brand_name
+      - name: species
+        description: What type of animal is the product for.
+      - name: net_weight
+        description: How much a product weighs minus packaging.
+      - name: weight_unit
+        description: Unit of weight measurement for a product, either lbs or kg.
+      - name: unit_of_measure
+        description: >
+          Base unit of measure (bag, case, etc.). This can be different from
+          selling unit in fct_ecc_orders.
+      - name: product_form
+        description: Whether the food is wet, dry, or treat form.
+  - name: dim_ecc_customers
+    description: >
+      Dimension table for ECC customers (clinics, stores, etc.). 
+      Each record is a separate account. Not all accounts are active.
+      All levels of the customery hierachy are included.
+    columns:
+      - name: customer_sales_id
+        description: >
+          Surrogate primary key made up of 
+          account_number and sales_organization.
+        tests:
+          - unique:
+              tags: [integrity,unique]
+          - not_null:
+              tags: [integrity,not_null]
+      - name: account_number
+        description: SAP ID for customer.
+      - name: account_created_on
+      - name: customer_name1
+      - name: customer_name2
+      - name: customer_name3
+      - name: customer_name4
+      - name: language_key
+        description: >
+          Code representing customer's preferred language.
+          Check SAP table T002 for full name.
+      - name: street_address
+      - name: city
+      - name: postal_code
+      - name: country
+      - name: active_flag
+        description: >
+          Whether or not the account is active (1 = active, 0 = inactive).
+          Active customers have placed an order relatively recently.
+          Check with finance for exactly how this defined.
+      - name: phone_number
+      - name: fax_number
+      - name: industry_sector
+      - name: state
+        description: State, province, etc. where the customer is located.
+      - name: customer_class
+        description: Sales channel.
+      - name: customer_class_description
+        description: >
+          Vet channel can purchase PD or SD. Pet channel can purchase SD.
+      - name: customer_tier
+        description: >
+          Ranking of a customer by sales potential.
+      - name: customer_grade
+        description: ABC classification.
+      - name: sales_organization
+        description: >
+          US customers = 'USHD'. 'NONE' refers to customers that are 
+          not currently assigned to a sales org.
+      - name: distribution_channel
+      - name: sales_division
+      - name: sales_region
+      - name: sales_district
+      - name: sales_territory
+      - name: price_group
+      - name: price_list_type
+      - name: npp_us_flag
+        description: >
+          Indicates whether or not a US customer participates
+          in the New Pet Parent Program.
+      - name: special_group
+      - name: special_group_description
+      - name: customer_hierarchy_level
+        description: Customer hierarchy level.
+  - name: fct_ecc_orders
+    description: > 
+      Fact table for ECC orders. Includes all order types, not just sales. 
+      Each record is an order line item.
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: ref("stg_ecc_order_line_items")
+          tags: [row_count,integrity]
+    columns:
+      - name: order_id
+        description: Surrogate key comprised of order number and order line item number.
+        tests:
+          - unique:
+              tags: [integrity,unique]
+          - not_null:
+              tags: [integrity,not_null]
+      - name: order_number
+        description: Unique order identifier.
+        tests:
+           - dbt_expectations.expect_column_distinct_count_to_equal_other_table:
+              compare_model: ref("stg_ecc_orders")
+              compare_column_name: ORDER_NUMBER
+              tags: [row_count,integrity]
+      - name: order_type
+        description: Order type code.
+      - name: order_type_description
+      - name: order_type_vet_channel_us
+        description: Higher-level grouping of the main order types for US vet clinics.
+      - name: order_placed_on
+        description: Date the order record was created on.
+      - name: order_category
+        description: Order category code
+      - name: order_category_description
+        description: Order category descriptive name.
+      - name: currency
+        description: ISO currency code for the order.
+      - name: payment_type
+        description: Whether or not a credit card was used for payment.
+      - name: sales_org
+        description: Sales organization. Use 'USHD' for US sales.
+      - name: dist_channel
+        description: Distribution Channel.
+      - name: division
+        description: Division name.
+      - name: sales_office
+        description: Sales office.
+      - name: sales_group
+        description: Sales group.
+      - name: overall_status
+        description: Overall status of the order.
+      - name: overall_status_description
+        description: Overall status descriptive names.
+      - name: sold_to_account_number
+        description: Account number of the customer making the purchase.
+      - name: sold_to_country
+        description: ISO country code of the customer making the purchase.
+      - name: sold_to_account_type
+        description: Corporate or independent.
+      - name: ship_to_account_number
+        description: Account number of the customer receiving the shipment.
+      - name: ship_to_country
+        description: ISO country code of the customer receiving the shipment.
+      - name: contact_account_number
+        description: Customer account number of the contact person on the order.
+      - name: order_line_item_number
+        description: Order line item number.
+      - name: sku
+        description: Alphanumeric code used to identify a product within a sales organization.
+      - name: order_qty
+        description: The amount of a line item ordered.
+      - name: selling_unit
+        description: Packaging description or sales unit.
+      - name: net_price
+        description: Net sale price of the line item ordered.
+      - name: net_weight
+        description: Net weight in lbs of the line item ordered.
+      - name: net_value
+        description: >
+          The net value of the line item after any discounts and surcharges 
+          are taken into account. Sales taxes are also not included.
+      - name: rejection_reason_code
+        description: Alphanumeric code used to identify the rejection of a line item.
+      - name: rejection_reason_description
+        description:  Rejection reason description.
+      - name: rejection_flag
+        description: Flag indicating if the line item was rejected or not (1 - rejected, 0 - not rejected).
+      - name: route
+        description: Shipping route code.
+      - name: route_description
+        description: Shipping route description.
+      - name: customer_sales_id
+        description: Surrogate key comprised of sold to account number and sales org.
+        tests:
+          - relationships:
+              to: ref('dim_ecc_customers')
+              field: customer_sales_id
+              tags: [integrity,relationship]
+          - not_null:
+              tags: [integrity, not_null]
+      - name: product_sales_id
+        description: Surrogate key comprised of sku and sales org.
+        tests:
+          - relationships:
+              to: ref('dim_ecc_products')
+              field: product_sales_id
+              tags: [integrity,relationship]
+          - not_null:
+              tags: [integrity, not_null]
+  - name: fct_ecc_order_line_items
+    description: > 
+      Fact table for ECC orders. Includes all order types, not just sales. 
+      Each record is an order line item.
+    columns:
+      - name: order_id
+        description: Surrogate key comprised of order number and order line item number.
+        tests:
+          - unique:
+              tags: [integrity,unique]
+          - not_null:
+              tags: [integrity,not_null]
+      - name: order_number
+        description: Unique order identifier.
+      - name: order_type
+        description: Order type code.
+      - name: order_type_description
+      - name: order_type_vet_channel_us
+        description: Higher-level grouping of the main order types for US vet clinics.
+      - name: order_placed_on
+        description: Date the order record was created on.
+      - name: order_category
+        description: Order category code
+      - name: order_category_description
+        description: Order category descriptive name.
+      - name: currency
+        description: ISO currency code for the order.
+      - name: payment_type
+        description: Whether or not a credit card was used for payment.
+      - name: sales_org
+        description: Sales organization. Use 'USHD' for US sales.
+      - name: dist_channel
+        description: Distribution Channel.
+      - name: division
+        description: Division name.
+      - name: sales_office
+        description: Sales office.
+      - name: sales_group
+        description: Sales group.
+      - name: overall_status
+        description: Overall status of the order.
+      - name: overall_status_description
+        description: Overall status descriptive names.
+      - name: sold_to_account_number
+        description: Account number of the customer making the purchase.
+      - name: sold_to_country
+        description: ISO country code of the customer making the purchase.
+      - name: sold_to_account_type
+        description: Corporate or independent.
+      - name: ship_to_account_number
+        description: Account number of the customer receiving the shipment.
+      - name: ship_to_country
+        description: ISO country code of the customer receiving the shipment.
+      - name: contact_account_number
+        description: Customer account number of the contact person on the order.
+      - name: order_line_item_number
+        description: Order line item number.
+      - name: sku
+        description: Alphanumeric code used to identify a product within a sales organization.
+      - name: order_qty
+        description: The amount of a line item ordered.
+      - name: selling_unit
+        description: Packaging description or sales unit.
+      - name: net_price
+        description: Net sale price of the line item ordered.
+      - name: net_weight
+        description: Net weight in lbs of the line item ordered.
+      - name: net_value
+        description: >
+          The net value of the line item after any discounts and surcharges 
+          are taken into account. Sales taxes are also not included.
+      - name: rejection_reason_code
+        description: Alphanumeric code used to identify the rejection of a line item.
+      - name: rejection_reason_description
+        description:  Rejection reason description.
+      - name: rejection_flag
+        description: Flag indicating if the line item was rejected or not (1 - rejected, 0 - not rejected).
+      - name: route
+        description: Shipping route code.
+      - name: route_description
+        description: Shipping route description.
+      - name: customer_sales_id
+        description: Surrogate key comprised of sold to account number and sales org.
+        tests:
+          - relationships:
+              to: ref('dim_ecc_customers')
+              field: customer_sales_id
+              tags: [integrity,relationship]
+          - not_null:
+              tags: [integrity, not_null]
+      - name: product_sales_id
+        description: Surrogate key comprised of sku and sales org.
+        tests:
+          - relationships:
+              to: ref('dim_ecc_products')
+              field: product_sales_id
+              tags: [integrity,relationship]
+          - not_null:
+              tags: [integrity, not_null]
