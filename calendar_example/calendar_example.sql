@@ -2,6 +2,11 @@
     materialized='view',
     sort='calendar_day_date'
     ) }}
+    
+/*
+This code creates date period slices to be used in Tableau. These act as flags that determine which days in the year correspond to the current 30 days, current month 2 years ago
+etc. 
+*/
 
 select
     calendar_day_date
