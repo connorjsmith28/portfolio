@@ -3,6 +3,7 @@ All the examples here include sanitized code that has been used in production fr
 
 ## Incremental Example
 The example referenced in my statement of purpose has it's main component under portfolio/ecc/base/incremental_fct.sql as well as portfolio/core/fct_ecc_orders.sql
+All the reference code has been included as well. 
 
 The following image describes the process I designed vs the old version for loading new data.
 
