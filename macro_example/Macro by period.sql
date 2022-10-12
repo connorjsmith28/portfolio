@@ -1,13 +1,15 @@
 {% macro  date_by_period(sql_statement, date_field, unique_key, include_current_period = False) -%}
 
 /*
-	Takes sql statement and partitions it into different date periods based on a given date_field. The table genereated by the sql_statement should be at the day grain level. 
+	Takes sql statement and partitions it into different date periods based on a given date_field. The table genereated by the sql_statement should
+	be at the day grain level. 
 
 	Args:
 		sql_statement: A sql string that generates a table at the day grain level
 		date_field: A date field in the form YYYY-MM-DD
 		unique_key: A unique identifier for the table. Should be unique and not null for every record
-		include_current_period: Optional, field that extends the most recent full period to also include the current period as well. For example, if today is 02-10-2022 the flag would create a 1 for each day from 01-01-2022 for the month grain. 
+		include_current_period: Optional, field that extends the most recent full period to also include the current period as well. 
+		For example, if today is 02-10-2022 the flag would create a 1 for each day from 01-01-2022 for the month grain. 
 
 	Returns:
 		A sql block that takes the original table, and partitions it out into various date periods. 
