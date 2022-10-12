@@ -1,5 +1,5 @@
 # portfolio
-The languages in this portfolio include both SQL and Python. While almost all the files are listed as .sql, the _example folders are using jinja (a templating language) that use Python to generate the SQL. 
+All the examples here include sanitized code that has been used in production from my various jobs. The languages in this portfolio include both SQL and Python. While almost all the files are listed as .sql, the _example folders are using Python via Jinja (a templating language) to generate the SQL. 
 
 ## Incremental Example
 The example referenced in my statement of purpose has it's main component under portfolio/ecc/base/incremental_fct.sql as well as portfolio/core/fct_ecc_orders.sql
