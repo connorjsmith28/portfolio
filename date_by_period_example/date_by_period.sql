@@ -1,3 +1,9 @@
+/*
+The following script takes an existing table and partitions the different metrics into the relevant year-period values. For example, if you had a sales table
+that tracked how many sales you made each day over the past three years, this script could take that and would tell you how many sales happened in a particular month,
+or week, or quarter across different years. 
+*/
+
 --two dictionaries containing year and the calculations to produce them, and another for period that has an index with the month values
 {% set year = {'Current': '0', '1 year previous': '-1', '2 years previous': '-2'} %}
 {% set period =
