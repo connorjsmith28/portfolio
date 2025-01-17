@@ -1,0 +1,418 @@
+version: 2
+
+models:
+  - name: stg_ecc_order_type_descriptions
+    description: Order type full descriptions.
+    columns:
+      - name: order_type
+        description: Order type code. Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: order_type_description
+        description: Full order type description.
+  - name: stg_ecc_order_ship_to_customers
+    description: Ship to account number information.
+    columns:
+      - name: order_number
+        description: Unique order identifier. Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: ship_to_account_number
+        description: Account number of the customer receiving the shipment.
+      - name: ship_to_country
+        description: ISO country code of the customer receiving the shipment.
+  - name: stg_ecc_order_sold_to_customers
+    description: Sold To account number information.
+    columns:
+      - name: order_number
+        description: Unique order identifier. Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: sold_to_account_number
+        description: Account number of the customer making the purchase.
+      - name: sold_to_country
+        description: ISO country code of the customer making the purchase.
+  - name: stg_ecc_order_contacts
+    description: Order contact person information.
+    columns:
+      - name: order_number
+        description: Unique order identifier. Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: contact_bp_number
+        description: ID number of the contact person on the order.
+      - name: contact_person_country
+        description: ISO country code of the contact person on the order.
+  - name: stg_ecc_orders
+    description: Order document records.
+    columns:
+      - name: order_number
+        description: Unique order identifier. Primary key.
+        tests:
+          - unique
+          - not_null
+      - name: order_type
+        description: Order type code.
+      - name: order_placed_on
+        description: Date when the order record was created on.
+      - name: order_category
+        description: Order category code.
+      - name: currency
+        description: ISO currency code for the order.
+      - name: sales_org
+        description: Sales organization.
+      - name: dist_channel
+        description: Distribution Channel.
+      - name: division
+        description: Division name.
+      - name: sales_group
+        description: Sales group.
+      - name: sales_office
+        description: Sales region.
+      - name: payment_method
+        description: If NULL then a credit card was used to pay.
+  - name: stg_ecc_order_line_items
+    description: Order line item records.
+    columns:
+      - name: order_number
+        description: Unique order identifier.
+        tests:
+          - not_null
+      - name: order_line_item_number
+        description: Order line item number.
+        tests:
+          - not_null
+      - name: order_item_id
+        description: >
+          Surrogate primary key consisting of order number and
+          order line item number
+        tests:
+          - unique
+          - not_null 
+      - name: sku
+        description: Alphanumeric code used to identify a product within a sales organization.
+      - name: order_qty
+        description: The quantity ordered.
+      - name: selling_unit
+        description: Packaging description.
+      - name: net_price
+        description: Net sale price of the product ordered.
+      - name: net_weight
+        description: Net weight of the item ordered.
+      - name: net_value
+        description: The net value of the line item after any discounts and surcharges are taken into account. Sales taxes are also not included.
+      - name: rejection_reason_code
+        description: Alphanumeric code used to identify the rejection reason of a line item.
+      - name: route
+        description: Shipping route code.
+  - name: stg_ecc_order_status
+    description: Order status
+    columns:
+      - name: order_number
+        description: Unique order identifier.
+        tests:
+          - not_null
+          - unique
+      - name: overall_status
+        description: Overall status of the order.
+        tests:
+          - accepted_values:
+              values:
+                - A
+                - B
+                - C
+                - ' '
+  - name: stg_ecc_product_descriptions
+    description: English language text descriptions of a product.
+    columns:
+      - name: sku
+        description: Alphanumeric code used to identify a product within a sales organization. Primary key.
+        tests:
+          - not_null
+          - unique 
+      - name: product_description
+        description: Short text description of a product.
+  - name: stg_ecc_product_status
+    description: Status of a product within a sales organization.
+    columns:
+      - name: product_sales_id
+        description: Surrogate key based on sku and sales_org. Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: sku
+        description: Alphanumeric code used to identify a product within a sales organization.
+      - name: sales_org
+        description: Regional sales organization.
+      - name: product_form
+        description: Whether the food is wet, dry, or treat form.
+      - name: product_status
+        description: Whether a product is currently produced and/or available to order (in-stock).
+      - name: status_valid_from
+        description: Date when product status changed. Only applies to non-active products (NULL = active).
+  - name: stg_ecc_finished_products
+    description: General information about finished products produced in-house.
+    columns:
+      - name: sku
+        description: Alphanumeric code used to identify a product within a sales organization. Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: product_group
+        description: Brand information.
+      - name: sku_created_on
+        description: Date when a product became active.
+      - name: base_uom
+        description: Base unit of measure (bag, case, etc.).
+      - name: net_weight
+        description: How much a product weighs.
+      - name: weight_unit
+        description: Unit of weight measurement for a product.
+  - name: stg_ecc_customers__sales_information
+    description: Sales-related information for customers.
+    columns:
+      - name: customer_sales_id
+        description: >
+          Surrogate primary key from account_number,
+          sales_org, distribution_channel, and sales_divsion.
+        tests:
+          - unique
+          - not_null
+      - name: account_number
+        description: Unique customer identifier.
+        tests:
+          - not_null
+      - name: client_id
+        description: SAP client code (321 = Hill's).
+      - name: customer_tier
+        description: Current ranking of customer sales potential.
+      - name: sales_org
+        description: Sales organization code.
+        tests:
+          - not_null
+      - name: sales_region
+      - name: sales_district
+      - name: sales_territory
+      - name: distribution_channel
+        tests:
+          - not_null
+      - name: sales_division
+        tests:
+          - not_null
+  - name: stg_ecc_customer_master_contact_partner
+    description: Customer master contact partner details
+    columns:
+      - name: account_number
+        description: Customer number
+      - name: client_id
+        description: Client number assigned by SAP.
+      - name: contact_bp_number
+        description: Number of contact person
+      - name: contact_title
+        description: Form of address for contact person (Mr, Mrs...etc)
+      - name: contact_first_name
+        description: First name
+      - name: contact_last_name
+        description: Last name
+      - name: del_flag_contact
+        description: Central deletion flag for master record
+      - name: contact_creation_date
+        description: Date on which the record was created
+      - name: contact_address_line_1
+        description: Contact home address
+      - name: contact_city
+        description: City name
+      - name: contact_function
+        description: Contact person function
+  - name: stg_ecc_customers__general_information
+    description: >
+      General information about customers (name, location, industry, etc.).
+    columns:
+      - name: client_id
+        description: Client number assigned by SAP.
+      - name: account_number
+        description: Customer number (SAP ID). Primary key.
+        tests:
+          - unique
+          - not_null
+      - name: account_created_on
+      - name: customer_name1
+      - name: customer_name2
+      - name: customer_name3
+      - name: customer_name4
+      - name: language_key
+        description: Code referring to customer's preferred language.
+      - name: street_address
+      - name: city
+      - name: postal_code
+      - name: country
+      - name: deletion_flag
+        description: Whether or not the account is active (X = inactive)
+      - name: phone_number
+      - name: fax_number
+      - name: industry_sector
+        description: What industry the customer is in.
+      - name: state
+        description: State, province, etc. where the customer is located.
+      - name: customer_class
+        description: Sales channel.
+  - name: stg_ecc_customer_telephone
+    description: Telephone number of customer
+    columns:
+      - name: client_id
+        description: Client number assigned by SAP.
+      - name: person_number
+        description: person Number
+      - name: contact_telephone_number
+        description: Telephone no. (dialling code + number)
+  - name: stg_ecc_customer_email_address
+    description: Telephone number of customer
+    columns:
+      - name: client_id
+        description: Client number assigned by SAP.
+      - name: person_number
+        description: person Number
+      - name: account_email
+        description: E-mail address
+      - name: contact_email
+        description: E-mail address
+  - name: stg_ecc_person_title
+    description: Title for the customer name
+    columns:
+      - name: client_id
+        description: Client number assigned by SAP.
+      - name: person_number
+        description: person Number
+      - name: contact_academic_title
+        description: Academic title (written form, ex - Dr., Prof. etc)
+  - name: stg_ecc_order_category_descriptions
+    description: Codes and descriptive names for order categories.
+    columns:
+      - name: order_category
+        description: Order category code.
+      - name: order_category_description
+        description: Order category descriptive name.
+  - name: stg_ecc_hybris_merge_orders
+    description: Merged order log from SAP Hybris.
+    columns:
+      - name: merge_order_id
+        description: Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: log_number
+      - name: order_number
+        description: Unique order identifier.
+      - name: order_line_item_number
+      - name: sku
+      - name: ship_to_account_number
+        description: Account number of the customer receiving the shipment.
+      - name: function_name
+        description: Indicates which SAP function module was used to update the log. This field should only have one value, MERGE_SALESORDER.
+      - name: merged_on
+        description: Date on which the merge was placed.
+        tests:
+          - not_null
+      - name: merged_on_time
+        description: Time on which the merge was placed.
+        tests:
+          - not_null
+  - name: stg_ecc_order_line_item_rejection_reasons
+    description: Rejection reason code full descriptions.
+    columns:
+      - name: rejection_reason_code
+        description: Rejection reason code.  Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: rejection_reason_description
+        description: Full rejection reason description.
+  - name: stg_ecc_orders_netvalue
+    description: Net Value of the total sales order.
+    columns:
+      - name: order_number
+        description: Primary key.
+        tests:
+          - not_null
+          - unique
+      - name: net_value_header
+        description: Net value of the sales order.
+  - name: stg_ecc_customers__special_group_descriptions
+    description: Text descriptions for special group.
+    columns:
+      - name: special_group_id
+        description: >
+          Surrogate primary key based on 
+          special_group and language_key.
+        tests:
+          - not_null
+          - unique
+      - name: special_group
+        description: >
+          Code referring to a group of customers
+          owned by the same entity.
+      - name: language_key
+      - name: special_group_description
+  - name: stg_ecc_orders__route_descriptions
+    description: Text descriptions for order shipping routes.
+    columns:
+      - name: route
+        description: Shipping route code.
+        tests:
+          - unique
+      - name: route_description
+        description: Full shipping route description.
+  - name: stg_ecc_rfm_mapping_segments
+    description: Codes and descriptive names for RFM segmentsorder categories.
+    columns:
+      - name: segment
+        description: Three digit RFM segment.
+      - name: segment_name
+        description: Segment treemap description name.
+      - name: segment_number
+        description: Segment treemap number.
+  - name: stg_ecc_customer_hierarchy
+    description: Customer hierarchies.
+    columns:
+      - name: customer_hierarchy_id
+        description: >
+          Surrogate primary key based on
+          hierarchy_type, account_number, sales_org, distribution_channel, division and valid_from.
+      - name: hierarchy_type
+        description: Customer hierarchy type.
+        tests:
+          - not_null
+      - name: account_number
+        description: Customer account number.
+        tests:
+          - not_null
+      - name: sales_org
+        description: Sales organization.
+        tests:
+          - not_null
+      - name: distribution_channel
+        description: Distribution Channel.
+        tests:
+          - not_null
+      - name: division
+        description: Division.
+        tests:
+          - not_null
+      - name: valid_from
+        description: Start of the validity period for the assignment.
+        tests:
+          - not_null
+      - name: valid_to
+        description: End of the validity period for the assignment.  
+        tests:
+          - not_null
+      - name: higher_level_account_number
+        description: Customer number of the higher-level customer hierarchy.
+      - name: customer_hierarchy_level
+        description: Customer hierarchy level.
+        tests:
+          - not_null        
